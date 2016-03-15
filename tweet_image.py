@@ -32,7 +32,10 @@ def get_mtime_str(file):
         mtime = os.path.getmtime(file)
     except OSError:
         return ''
-    time_str = time.ctime(mtime) + ' UTC' + str(-time.timezone/3600)
+    is_dst = time.daylight and time.localtime().tm_isdst > 0
+    # UTC offset in seconds
+    offset = - (time.altzone if is_dst else time.timezone)
+    time_str = time.ctime(mtime) + ' UTC' + str(offset/3600)
     return time_str
 
 
