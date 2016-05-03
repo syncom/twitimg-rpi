@@ -1,7 +1,7 @@
 #/bin/bash
 ROOTDIR=`dirname $0`
 photo="/mnt/ramdisk/pic.gif"
-list=$(find /mnt/ramdisk -name *.jpg | sort)
+list=$(find /mnt/ramdisk -name '*.jpg' | sort)
 # strip meta data
 mogrify -strip ${list}
 # convert to animated gif, 1/2 second delay between frames
