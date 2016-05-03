@@ -28,15 +28,18 @@ Usage:
 5. Create a cron job to take a still picture from the RPi camera module every 1 minute. Do `crontab -e` and add the following:
     ```
     # take still picture every 1 minute
-    * * * * * /home/pi/bin/twitimg/camera_raspistill.sh 2>&1
+    * * * * * /home/pi/bin/twitimg-rpi/camera_raspistill.sh 2>&1
     ```
   Create a cron job to upload an animated GIF image combined from the still images taken in the past 20 minutes. Do `crontab -e` and add the following:
     ```
     # upload image every 20 minutes
-    0,20,40 * * * * /home/pi/bin/twitimg/twitimg-run.sh
+    0,20,40 * * * * /home/pi/bin/twitimg-rpi/twitimg-run.sh
     ```
   Because currently Twitter only allows uploading of an animated GIF of maximum size of 5M bytes, this setting works well for me. You may want to tweak the frequencies of taking still pictures and uploading according to your situation.
 
 6. Connect the RPi to the Internet, and watch the stream of videos from your Twitter timeline.
 
-
+7. (Optional) To turn off the LED red light in the camera module when taking pictures, edit the file `/boot/config.txt` to add / change the following line:
+    ```
+    disable_camera_led=1
+    ```
