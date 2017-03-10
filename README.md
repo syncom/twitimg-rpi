@@ -8,7 +8,10 @@ A simple tool turns a Raspberry Pi (RPi) into a security monitoring system.
 - Python 2.7: twython, pyOpenSSL, ndg-httpsclient, pyasn1
 - A Twitter account (for multimedia storage and accessibility)
 
+## Twit a time-lapse gif every 20 minutes
+
 Usage:
+
 1. Install the camera module on the RPi, and enable camera module from `rspi-config` menu.
 
 2. Create a Twitter app and obtain the API Key, API Secret, Access Token, and Access Token Secret for the app. This can be done by following the instructions at: http://www.instructables.com/id/Raspberry-Pi-Twitterbot/?ALLSTEPS.
@@ -43,3 +46,4 @@ Usage:
     ```
     disable_camera_led=1
     ```
+
