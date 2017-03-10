@@ -5,10 +5,10 @@ A simple tool turns a Raspberry Pi (RPi) into a security monitoring system.
 - A Raspberry Pi (version 1-3) Model B (needs Internet connectivity)
 - A camera module (this would work: https://www.raspberrypi.org/products/camera-module/)
 - Imagemagick (for image conversion on the RPi)
-- Python 2.7: twython, pyOpenSSL, ndg-httpsclient, pyasn1
+- Python 2.7: twython, pyOpenSSL, ndg-httpsclient, pyasn1, PIL
 - A Twitter account (for multimedia storage and accessibility)
 
-## Twit a time-lapse gif every 20 minutes
+## Tweet a time-lapse GIF every 20 minutes
 
 Usage:
 
@@ -46,4 +46,19 @@ Usage:
     ```
     disable_camera_led=1
     ```
+## Tweet a JPEG image upon motion detection
 
+1. Follow the same steps 1-3 as above to install the camera module and set up the twitter account.
+
+2. Create another ramdisk of size 80M bytes to store motion-detected image files.
+```
+   mkdir /mnt/ramdisk_motion
+   mount -t tmpfs -o size=80M tmpfs /mnt/ramdisk_motion 
+```
+
+  To make the ramdisk persist over reboots, add the following lines to `/etc/fstab`:
+    ```
+    # ramdisk for camera capture (added 20170309)
+    tmpfs       /mnt/ramdisk_motion tmpfs   nodev,nosuid,noexec,nodiratime,size=80m   0 0
+    ``` 
+3. Run `twitimg-motion-run.sh`. 
