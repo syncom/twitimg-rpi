@@ -36,11 +36,20 @@ reserve_diskspace = 40 * 1024 * 1024 # Keep 40 mb free on disk
 def captureTestImage():
     command = "raspistill -w %s -h %s -t 1000 -e bmp -o -" % (test_width,
               test_height)
+    output = None
     image_data = StringIO.StringIO()
-    image_data.write(subprocess.check_output(command, shell=True))
-    image_data.seek(0)
-    im = Image.open(image_data)
-    buffer = im.load()
+    try:
+        output = subprocess.check_output(command, shell=True)
+    except subprocess.CalledProcessError:
+        print "Command exited with non-zero code. No output."
+        return None, None
+
+    if output:
+        image_data.write(output)
+        image_data.seek(0)
+        im = Image.open(image_data)
+        buffer = im.load()
+
     image_data.close()
     return im, buffer
 
@@ -49,8 +58,13 @@ def saveImage(width, height, dirname, diskSpaceToReserve):
     keepDiskSpaceFree(dirname, diskSpaceToReserve)
     time = datetime.now()
     filename = "motion-%04d%02d%02d-%02d%02d%02d.jpg" % (time.year, time.month, time.day, time.hour, time.minute, time.second)
-    subprocess.call("raspistill -w %s -h %s -t 10 -e jpg -q 15 -o %s/%s" 
-                    % (width, height, dirname.rstrip('/'), filename), shell=True)
+    command = "raspistill -w %s -h %s -t 10 -e jpg -q 15 -o %s/%s" % (width, height, dirname.rstrip('/'), filename)
+    try:
+        subprocess.call(command, shell=True)
+    except subprocess.CalledProcessError:
+        print "Command exited with non-zero code. No file captured."
+        return None
+
     print "Captured %s/%s" % (dirname.rstrip('/'), filename)
     return dirname.rstrip('/') + '/' + filename
 
@@ -76,12 +90,20 @@ def do_tweet_motion(dirname):
     				          
     mod = importlib.import_module("tweet_image")
     # Get first image
-    image1, buffer1 = captureTestImage()
+    captured1 = False
+    while (not captured1):
+        image1, buffer1 = captureTestImage()
+        if image1:
+            captured1 = True
 
     while (True):
 
         # Get comparison image
-        image2, buffer2 = captureTestImage()
+        captured2 = False
+        while (not captured2):
+            image2, buffer2 = captureTestImage()
+            if image2:
+                captured2 = True
 
         # Count changed pixels
         changedPixels = 0
@@ -96,7 +118,8 @@ def do_tweet_motion(dirname):
         if changedPixels > sensitivity:
             fpath = saveImage(save_width, save_height, dirname, reserve_diskspace)
             # Tweet saved image
-            mod.do_tweet(fpath)
+            if fpath:
+                mod.do_tweet(fpath)
        
         # Swap comparison buffers
         image1 = image2
