@@ -34,7 +34,7 @@ reserve_diskspace = 40 * 1024 * 1024 # Keep 40 mb free on disk
 
 # Capture a small bitmap test image, for motion detection
 def captureTestImage():
-    command = "raspistill -w %s -h %s -t 0 -e bmp -o -" % (test_width,
+    command = "raspistill -w %s -h %s -t 1000 -e bmp -o -" % (test_width,
               test_height)
     image_data = StringIO.StringIO()
     image_data.write(subprocess.check_output(command, shell=True))
@@ -49,7 +49,7 @@ def saveImage(width, height, dirname, diskSpaceToReserve):
     keepDiskSpaceFree(dirname, diskSpaceToReserve)
     time = datetime.now()
     filename = "motion-%04d%02d%02d-%02d%02d%02d.jpg" % (time.year, time.month, time.day, time.hour, time.minute, time.second)
-    subprocess.call("raspistill -w %s -h %s -t 0 -e jpg -q 15 -o %s/%s" 
+    subprocess.call("raspistill -w %s -h %s -t 10 -e jpg -q 15 -o %s/%s" 
                     % (width, height, dirname.rstrip('/'), filename), shell=True)
     print "Captured %s/%s" % (dirname.rstrip('/'), filename)
     return dirname.rstrip('/') + '/' + filename
@@ -94,13 +94,13 @@ def do_tweet_motion(dirname):
 
         # Save an image if pixels changed
         if changedPixels > sensitivity:
-            fpath = saveImage(save_width, save_height, reserve_diskspace)
+            fpath = saveImage(save_width, save_height, dirname, reserve_diskspace)
+            # Tweet saved image
+            mod.do_tweet(fpath)
        
         # Swap comparison buffers
         image1 = image2
         buffer1 = buffer2
-        # Tweet saved image
-        mod.do_tweet(fpath)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
