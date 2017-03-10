@@ -48,17 +48,20 @@ Usage:
     ```
 ## Tweet a JPEG image upon motion detection
 
+Usage:
+
 1. Follow the same steps 1-3 as above to install the camera module and set up the twitter account.
 
 2. Create another ramdisk of size 80M bytes to store motion-detected image files.
-```
+   ```
    mkdir /mnt/ramdisk_motion
    mount -t tmpfs -o size=80M tmpfs /mnt/ramdisk_motion 
-```
+   ```
 
-  To make the ramdisk persist over reboots, add the following lines to `/etc/fstab`:
-    ```
+   To make the ramdisk persist over reboots, add the following lines to `/etc/fstab`:
+   ```
     # ramdisk for camera capture (added 20170309)
     tmpfs       /mnt/ramdisk_motion tmpfs   nodev,nosuid,noexec,nodiratime,size=80m   0 0
-    ``` 
+   ``` 
+
 3. Run `twitimg-motion-run.sh`. 
