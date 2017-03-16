@@ -119,7 +119,11 @@ def do_tweet_motion(dirname):
             fpath = saveImage(save_width, save_height, dirname, reserve_diskspace)
             # Tweet saved image
             if fpath:
-                mod.do_tweet(fpath)
+                try:
+                    mod.do_tweet(fpath)
+                except TwythonRateLimitError:
+                    print "Hitting a twitter rating limit. Wait 15 minutes."
+                    time.sleep(900) # Wait 15 minutes
        
         # Swap comparison buffers
         image1 = image2
