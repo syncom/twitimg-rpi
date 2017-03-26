@@ -23,7 +23,7 @@ Usage:
     mkdir /mnt/ramdisk
     mount -t tmpfs -o size=25m tmpfs /mnt/ramdisk
     ```
-  To make the ramdisk persist over reboots, add the following lines to `/etc/fstab`:
+   To make the ramdisk persist over reboots, add the following lines to `/etc/fstab`:
 
     ```
     # ramdisk for camera capture (added 20160306)
