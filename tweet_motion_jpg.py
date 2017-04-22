@@ -34,7 +34,7 @@ reserve_diskspace = 40 * 1024 * 1024 # Keep 40 mb free on disk
 
 # Capture a small bitmap test image, for motion detection
 def captureTestImage():
-    command = "raspistill -w %s -h %s -t 1000 -e bmp -o -" % (test_width,
+    command = "raspistill -n -w %s -h %s -t 1000 -e bmp -o -" % (test_width,
               test_height)
     output = None
     image_data = StringIO.StringIO()
@@ -58,7 +58,7 @@ def saveImage(width, height, dirname, diskSpaceToReserve):
     keepDiskSpaceFree(dirname, diskSpaceToReserve)
     time = datetime.now()
     filename = "motion-%04d%02d%02d-%02d%02d%02d.jpg" % (time.year, time.month, time.day, time.hour, time.minute, time.second)
-    command = "raspistill -w %s -h %s -t 10 -e jpg -q 15 -o %s/%s" % (width, height, dirname.rstrip('/'), filename)
+    command = "raspistill -n -w %s -h %s -t 10 -e jpg -q 15 -o %s/%s" % (width, height, dirname.rstrip('/'), filename)
     try:
         subprocess.call(command, shell=True)
     except subprocess.CalledProcessError:
