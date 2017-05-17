@@ -23,7 +23,7 @@ import importlib
 # - threshold: how much a pixel has to change by to be marked as "changed"
 # - sensitivity: how many changed pixels before capturing an image
 threshold = 10
-sensitivity = 200
+sensitivity = 800
 test_width = 100
 test_height = 75
 
