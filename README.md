@@ -69,4 +69,18 @@ Usage:
     tmpfs       /mnt/ramdisk_motion tmpfs   nodev,nosuid,noexec,nodiratime,size=80m   0 0
    ``` 
 
-3. Run `twitimg-motion-run.sh`. 
+3. Run `twitimg-motion-run.sh`.
+
+4. (Optional) To run the program upon system boot, create a cron job:
+   ```
+   crontab -e
+   ```
+   And add the following lines (and redirect stdout and stderr output 
+   to a file)
+   ```
+   # Upon reboot
+   @reboot /home/pi/bin/twitimg-rpi/twitimg-motion-run.sh > /home/pi/bin/twitimg-rpi/twitimg.log 2>&1
+   ```
+   (For some unknown reason, although the script is running after a
+   reboot, nothing seems to be written to the log file. I'm still yet to
+   figure this out) 
