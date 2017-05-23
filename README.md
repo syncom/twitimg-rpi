@@ -79,8 +79,10 @@ Usage:
    to a file)
    ```
    # Upon reboot
-   @reboot /home/pi/bin/twitimg-rpi/twitimg-motion-run.sh > /home/pi/bin/twitimg-rpi/twitimg.log 2>&1
+   @reboot stdbuf -oL -eL /home/pi/bin/twitimg-rpi/twitimg-motion-run.sh > /home/pi/bin/twitimg-rpi/twitimg.log 2>&1
    ```
-   (For some unknown reason, although the script is running after a
-   reboot, nothing seems to be written to the log file. I'm still yet to
-   figure this out) 
+   In the above line, we use `stdbuf -oL -eL` tool in the `coreutils`
+   package to set line buffering for stdout and stderr, so that log
+   messages are written to the log file immediately. (If you wish to
+   completely turn off buffering for stdout and stderr, use the `-o0
+   -e0` options.)
