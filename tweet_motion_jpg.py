@@ -17,7 +17,7 @@ import argparse
 from datetime import datetime
 from PIL import Image
 import importlib
-
+from twython import Twython
 
 # Motion detection settings:
 # - threshold: how much a pixel has to change by to be marked as "changed"
@@ -97,6 +97,10 @@ def do_tweet_motion(dirname):
             captured1 = True
 
     while (True):
+        # Time granule for wait in the case of error/exception
+        basic_wait = 300
+        # Double multiplicity when error/exception happens
+        mult = 1
 
         # Get comparison image
         captured2 = False
@@ -121,9 +125,14 @@ def do_tweet_motion(dirname):
             if fpath:
                 try:
                     mod.do_tweet(fpath)
-                except TwythonRateLimitError:
-                    print "Hitting a twitter rating limit. Wait 15 minutes."
-                    time.sleep(900) # Wait 15 minutes
+                    mult = 1
+                except Exception as e:
+                    print "Tweet failed. Encountered exception, as follows: "
+                    print(e)
+                    sleeptime = mult * basic_wait
+                    time.sleep(sleeptime) # Wait some time
+                    print("Retry after {0} seconds".format(sleeptime))
+                    mult = mult * 2
        
         # Swap comparison buffers
         image1 = image2
