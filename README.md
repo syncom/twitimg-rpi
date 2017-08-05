@@ -86,3 +86,14 @@ Usage:
    messages are written to the log file immediately. (If you wish to
    completely turn off buffering for stdout and stderr, use the `-o0
    -e0` options.)
+
+5. (Optional) Reboot the RPI nightly.
+   ```
+   sudo crontab -e
+   ```
+   Add the following lines
+   ```
+   # reboot at 00:05 every day
+   0  0 * * * /sbin/shutdown -r +5 
+   ```
+
