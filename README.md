@@ -4,7 +4,8 @@ A simple tool turns a Raspberry Pi (RPi) into a security monitoring system.
 # What are needed
 - A Raspberry Pi (version 1-3) Model B (needs Internet connectivity)
 - A camera module (this would work: https://www.raspberrypi.org/products/camera-module/)
-- Imagemagick (for image conversion on the RPi)
+- imagemagick (for image conversion on the RPi), libssl-dev, build-essential,
+  python-imaging, libffi-dev
 - Python 2.7: twython, pyOpenSSL, ndg-httpsclient, pyasn1, PIL
 - A Twitter account (for multimedia storage and accessibility)
 
