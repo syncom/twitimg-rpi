@@ -4,9 +4,10 @@ A simple tool turns a Raspberry Pi (RPi) into a security monitoring system.
 
 # What are needed
 
-- A Raspberry Pi (version 1-3) Model B (needs Internet connectivity)
-- A camera module (this would work:
-  <https://www.raspberrypi.org/products/camera-module/>)
+- A Raspberry Pi (version 1-3) Model B (needs Internet connectivity) running
+  Raspberry Pi OS Lite (32-bit)
+- A camera module (any of these sould work:
+  <https://www.raspberrypi.com/documentation/accessories/camera.html>)
 - imagemagick (for image conversion on the RPi), libssl-dev, build-essential,
   python-imaging, libffi-dev
 - Python 2.7: twython, pyOpenSSL, ndg-httpsclient, pyasn1, PIL
@@ -16,7 +17,13 @@ A simple tool turns a Raspberry Pi (RPi) into a security monitoring system.
 
 Usage:
 
-1. Install the camera module on the RPi, and enable camera module from `raspi-config` menu.
+1. Install the camera module on the RPi. Install the `rpicam-apps` package and
+   other dependencies
+
+   ```bash
+   sudo apt update
+   sudo apt install rpicam-apps imagemagick
+   ```
 
 2. Create a Twitter app and obtain the API Key, API Secret, Access Token, and
    Access Token Secret for the app. This can be done by following the
@@ -33,15 +40,16 @@ Usage:
    Twitter app API access token strings obtained in the last step.
 
 4. Because we are going to write and delete a lot of files, in order to prevent
-   the SD card worn out, create a ramdisk (of size 25M bytes) to store image
-   files created during the process.
+   the SD card from wearing out, create a ramdisk (of size 25M bytes) to store
+   image files created during the process.
 
    ```bash
    mkdir /mnt/ramdisk
    mount -t tmpfs -o size=25m tmpfs /mnt/ramdisk
    ```
 
-   To make the ramdisk persist over reboots, add the following lines to `/etc/fstab`:
+   To make the ramdisk persist over reboots, add the following lines to
+   `/etc/fstab`:
 
    ```text
    # ramdisk for camera capture (added 20160306)
