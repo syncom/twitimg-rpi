@@ -22,7 +22,7 @@ Usage:
 
    ```bash
    sudo apt update
-   sudo apt install rpicam-apps imagemagick
+   sudo apt install rpicam-apps imagemagick git vim
    ```
 
 2. Create a Twitter app and obtain the API Key, API Secret, Access Token, and

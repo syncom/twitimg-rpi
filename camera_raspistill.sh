@@ -3,4 +3,4 @@
 # RAM disk.  Ensure the RAM disk is mounted at /mnt/ramdisk
 
 DATE=$(date +"%Y-%m-%d_%H%M")
-rpicam-still --width 640 --height 480 --quality 15 -o /mnt/ramdisk/${DATE}.jpg
+rpicam-still --width 640 --height 480 --quality 42 -o /mnt/ramdisk/${DATE}.jpg

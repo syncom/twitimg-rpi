@@ -1,4 +1,5 @@
-#/bin/bash
+#/usr/bin/env bash
+
 ROOTDIR=`dirname $0`
 photo="/mnt/ramdisk/pic.gif"
 list=$(find /mnt/ramdisk -name '*.jpg' | sort)

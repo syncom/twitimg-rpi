@@ -143,4 +143,3 @@ if __name__ == '__main__':
     parser.add_argument("dir_path")
     args = parser.parse_args()
     do_tweet_motion(args.dir_path)
-
