@@ -22,7 +22,8 @@ Usage:
 
    ```bash
    sudo apt update
-   sudo apt install rpicam-apps imagemagick git vim
+   sudo apt install rpicam-apps imagemagick git vim \
+     python3-dev python3-setuptools libjpeg-dev
    ```
 
 2. Create a Twitter app and obtain the API Key, API Secret, Access Token, and
