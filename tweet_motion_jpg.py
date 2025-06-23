@@ -9,7 +9,7 @@ Read brainflakes' original post for the algorithm. I have removed the force
 capture part for this script.
 
 """
-import StringIO
+import io
 import subprocess
 import os
 import time
@@ -34,14 +34,13 @@ reserve_diskspace = 40 * 1024 * 1024 # Keep 40 mb free on disk
 
 # Capture a small bitmap test image, for motion detection
 def captureTestImage():
-    command = "raspistill -n -w %s -h %s -t 1000 -e bmp -o -" % (test_width,
-              test_height)
+    command = f"rpicam-still --nopreview --width {test_width} --height {test_height} --timeout 1000 --encoding bmp --output -"
     output = None
-    image_data = StringIO.StringIO()
+    image_data = io.StringIO()
     try:
         output = subprocess.check_output(command, shell=True)
     except subprocess.CalledProcessError:
-        print "Command exited with non-zero code. No output."
+        print("Command exited with non-zero code. No output.")
         return None, None
 
     if output:
@@ -58,14 +57,18 @@ def saveImage(width, height, dirname, diskSpaceToReserve):
     keepDiskSpaceFree(dirname, diskSpaceToReserve)
     time = datetime.now()
     filename = "motion-%04d%02d%02d-%02d%02d%02d.jpg" % (time.year, time.month, time.day, time.hour, time.minute, time.second)
-    command = "raspistill -n -w %s -h %s -t 10 -e jpg -q 15 -o %s/%s" % (width, height, dirname.rstrip('/'), filename)
+    command = (
+        f"rpicam-still --nopreview --width {width} --height {height} "
+        f"--timeout 10 --encoding jpg --quality 42 "
+        f"--output {dirname.rstrip('/')}/{filename}"
+    )
     try:
         subprocess.call(command, shell=True)
     except subprocess.CalledProcessError:
-        print "Command exited with non-zero code. No file captured."
+        print("Command exited with non-zero code. No file captured.")
         return None
 
-    print "Captured %s/%s" % (dirname.rstrip('/'), filename)
+    print(f"Captured {dirname.rstrip('/')}/{filename}")
     return dirname.rstrip('/') + '/' + filename
 
 # Keep free space above given level
@@ -74,7 +77,7 @@ def keepDiskSpaceFree(dirname, bytesToReserve):
         for filename in sorted(os.listdir(dirname)):
             if filename.startswith("motion") and filename.endswith(".jpg"):
                 os.remove(dirname.rstrip('/') +"/" + filename)
-                print "Deleted %s/%s to avoid filling disk" % ( dirname.rstrip('/'), filename )
+                print(f"Deleted {dirname.rstrip('/')}/{filename} to avoid filling disk")
                 if (getFreeSpace(dirname) > bytesToReserve):
                     return
     return
@@ -124,14 +127,16 @@ def do_tweet_motion(dirname):
             # Tweet saved image
             if fpath:
                 try:
-                    mod.do_tweet(fpath)
+                    # mod.do_tweet(fpath)
+                    print(f"Image captured with {changedPixels} changed pixels, tweeting {fpath}")
+                    print("mod.do_tweet(fpath)")
                     mult = 1
                 except Exception as e:
-                    print "Tweet failed. Encountered exception, as follows: "
+                    print("Tweet failed. Encountered exception, as follows: ")
                     print(e)
                     sleeptime = mult * basic_wait
                     time.sleep(sleeptime) # Wait some time
-                    print("Retry after {0} seconds".format(sleeptime))
+                    print(f"Retry after {sleeptime} seconds")
                     mult = mult * 2
        
         # Swap comparison buffers
@@ -140,6 +145,6 @@ def do_tweet_motion(dirname):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("dir_path")
+    parser.add_argument("dir_path", help="Directory to save images")
     args = parser.parse_args()
     do_tweet_motion(args.dir_path)

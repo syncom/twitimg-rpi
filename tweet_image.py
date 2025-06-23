@@ -46,12 +46,12 @@ def do_tweet(file):
     api = Twython(ApiKey, ApiSecret, AccessToken, AccessTokenSecret)
     str = get_mtime_str(file)
     if not str:
-        print "Something went wrong. Nothing was tweeted."
+        print("Something went wrong. Nothing was tweeted.")
     else:
         photo = open(file, 'rb')
         response = api.upload_media(media=photo)
         api.update_status(status=str, media_ids=[response['media_id']])
-        print "Tweeted image taken at " + str
+        print(f"Tweeted image taken at {str}")
 
 
 if __name__ == '__main__':
@@ -59,4 +59,3 @@ if __name__ == '__main__':
     parser.add_argument("image_path")
     args = parser.parse_args()
     do_tweet(args.image_path)
-
