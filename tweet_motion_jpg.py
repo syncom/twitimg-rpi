@@ -36,7 +36,7 @@ reserve_diskspace = 40 * 1024 * 1024 # Keep 40 mb free on disk
 def captureTestImage():
     command = f"rpicam-still --nopreview --width {test_width} --height {test_height} --timeout 1000 --encoding bmp --output -"
     output = None
-    image_data = io.StringIO()
+    image_data = io.BytesIO()
     try:
         output = subprocess.check_output(command, shell=True)
     except subprocess.CalledProcessError:
