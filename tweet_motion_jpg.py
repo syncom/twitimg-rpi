@@ -114,8 +114,8 @@ def do_tweet_motion(dirname):
 
         # Count changed pixels
         changedPixels = 0
-        for x in xrange(0, test_width):
-            for y in xrange(0, test_height):
+        for x in range(0, test_width):
+            for y in range(0, test_height):
                 # Just check green channel as it's the highest quality channel
                 pixdiff = abs(buffer1[x,y][1] - buffer2[x,y][1])
                 if pixdiff > threshold:
