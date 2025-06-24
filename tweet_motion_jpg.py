@@ -108,6 +108,8 @@ def do_tweet_motion(dirname, is_dryrun=False):
     # Main loop
     print("Starting main loop. Press Ctrl+C to stop.")
     while (True):
+        print(f"Iteration {count + 1} of main loop")
+
         # Time granule for wait in the case of error/exception
         basic_wait = 300
         # Double multiplicity when error/exception happens
