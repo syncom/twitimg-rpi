@@ -33,9 +33,20 @@ Usage:
    April 2023, if you start seeing API authentication errors, and a message like
    "This app has violated Twitter rules and policies" on the Twitter app setting
    page, sign up for the Free tier of "[Twitter API
-   v2](https://developer.twitter.com/en/portal/products)" (at no cost), and
-   clicked button "downgrade to free"; this resolved the auth issue
+   v2](https://developer.x.com/en/portal/products)" (at no cost), and clicked
+   button "downgrade to free"; this resolved the auth issue
    ([reference](https://twittercommunity.com/t/this-app-has-violated-twitter-rules-and-policies/191204/10)).
+
+   One also needs to create a "project" in the [X developer
+   portal](https://developer.x.com/en/portal/dashboard), and add this Twitter
+   app to it. Otherwise, one might encounter the following error message (as of
+   20250624):
+
+   ```text
+    When authenticating requests to the Twitter API v2 endpoints, you must use
+    keys and tokens from a Twitter developer App that is attached to a Project.
+    You can create a project via the developer portal.
+   ```
 
 3. Override the corresponding strings in the file '.auth' with appropriate
    Twitter app API access token strings obtained in the last step.
