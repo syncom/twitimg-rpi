@@ -5,5 +5,5 @@ oauthlib==3.3.1
 pillow==11.2.1
 requests==2.32.4
 requests-oauthlib==2.0.0
-twython==3.9.1
+tweepy==4.16.0
 urllib3==2.5.0

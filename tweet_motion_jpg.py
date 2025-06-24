@@ -17,7 +17,6 @@ import argparse
 from datetime import datetime
 from PIL import Image
 import importlib
-from twython import Twython
 import tweet_image
 
 # Motion detection settings:

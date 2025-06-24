@@ -5,23 +5,40 @@ import sys
 import argparse
 import time
 import datetime
-from twython import Twython
+import tweepy
 
-ApiKey = ''
-ApiSecret = ''
-AccessToken = ''
-AccessTokenSecret = ''
-cred_file = os.path.dirname(os.path.realpath(__file__)) +'/.auth'
 twitter_allowed_char = 140
+ROOTDIR = os.path.dirname(os.path.realpath(__file__))
+CRED_FILE = os.path.join(ROOTDIR, '.auth')
 
-def get_api_token():
-    ''' Obtain Twitter app's API token from file .auth
-    Returns list
-    '''
-    f = open(cred_file, 'rb')
-    c = f.read()
-    t = c.splitlines()
-    return t[0:4]
+def get_credential():
+    """Botain Twitter app's API credentials from environment or file .auth
+
+    If any of the environment variables TWITIMG_API_KEY, TWITIMG_API_SECRET,
+    TWITIMG_ACCESS_TOKEN, TWITIMG_ACCESS_TOKEN_SECRET is set, it will be used.
+    Otherwise, the credentials will be read from the file .auth
+
+    Returns:
+        list: A list containing API key, API secret, access token, and access token secret.
+    """
+    api_key = os.environ.get('TWITIMG_API_KEY')
+    api_secret = os.environ.get('TWITIMG_API_SECRET')
+    access_token = os.environ.get('TWITIMG_ACCESS_TOKEN')
+    access_token_secret = os.environ.get('TWITIMG_ACCESS_TOKEN_SECRET')
+    credential = [api_key, api_secret, access_token, access_token_secret]
+
+    if os.path.exists(CRED_FILE):
+        with open(CRED_FILE, 'r', encoding='utf-8') as fil:
+            content = fil.read()
+            templ = content.splitlines()
+            if len(templ) < 4:
+                raise ValueError(CRED_FILE
+                                + " is malformed. "
+                                + "It needs to contain at least 4 secrets")
+            return [fil if env is None else env
+                    for env, fil in zip(credential, templ)]
+
+    return credential
 
 def get_mtime_str(file):
     ''' Obtain file modification time string.
@@ -42,17 +59,25 @@ def get_mtime_str(file):
 def do_tweet(file):
     ''' Tweet image modification time and image to Twitter
     '''
-    [ApiKey, ApiSecret, AccessToken, AccessTokenSecret] = get_api_token()
-    api = Twython(ApiKey, ApiSecret, AccessToken, AccessTokenSecret)
-    str = get_mtime_str(file)
-    if not str:
-        print("Something went wrong. Nothing was tweeted.")
-    else:
-        photo = open(file, 'rb')
-        response = api.upload_media(media=photo)
-        api.update_status(status=str, media_ids=[response['media_id']])
-        print(f"Tweeted image taken at {str}")
+    [api_key, api_secret, access_token, access_token_secret] = get_credential()
+    auth = tweepy.OAuth1UserHandler(
+        api_key, api_secret, access_token, access_token_secret)
+    api = tweepy.API(auth)
 
+    try:
+        image = api.media_upload(filename=file)
+        print(f"Image {file} uploaded successfully. Media ID: {image.media_id}")
+
+        status_str = get_mtime_str(file)
+
+        tweet = api.update_status(
+            status=status_str[:twitter_allowed_char],
+            media_ids=[image.media_id]
+        )
+        print(f"Tweeted image taken at {status_str}. Tweet ID: {tweet.id}")
+    except tweepy.TweepError as e:
+        print(f"Error occurred: {e}")
+        raise
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
