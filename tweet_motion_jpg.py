@@ -18,6 +18,7 @@ from datetime import datetime
 from PIL import Image
 import importlib
 from twython import Twython
+import tweet_image
 
 # Motion detection settings:
 # - threshold: how much a pixel has to change by to be marked as "changed"
@@ -73,25 +74,24 @@ def saveImage(width, height, dirname, diskSpaceToReserve):
 
 # Keep free space above given level
 def keepDiskSpaceFree(dirname, bytesToReserve):
-    if (getFreeSpace(dirname) < bytesToReserve):
+    if (get_free_space(dirname) < bytesToReserve):
         for filename in sorted(os.listdir(dirname)):
             if filename.startswith("motion") and filename.endswith(".jpg"):
                 os.remove(dirname.rstrip('/') +"/" + filename)
                 print(f"Deleted {dirname.rstrip('/')}/{filename} to avoid filling disk")
-                if (getFreeSpace(dirname) > bytesToReserve):
+                if (get_free_space(dirname) > bytesToReserve):
                     return
     return
 
 # Get available disk space
-def getFreeSpace(dir):
+def get_free_space(dir):
     st = os.statvfs(dir)
     du = st.f_bavail * st.f_frsize
     return du
  
 # Where work happens
-def do_tweet_motion(dirname):
+def do_tweet_motion(dirname, is_dryrun=False):
     				          
-    mod = importlib.import_module("tweet_image")
     # Get first image
     captured1 = False
     while (not captured1):
@@ -126,25 +126,44 @@ def do_tweet_motion(dirname):
             fpath = saveImage(save_width, save_height, dirname, reserve_diskspace)
             # Tweet saved image
             if fpath:
-                try:
-                    # mod.do_tweet(fpath)
-                    print(f"Image captured with {changedPixels} changed pixels, tweeting {fpath}")
-                    print("mod.do_tweet(fpath)")
-                    mult = 1
-                except Exception as e:
-                    print("Tweet failed. Encountered exception, as follows: ")
-                    print(e)
-                    sleeptime = mult * basic_wait
-                    time.sleep(sleeptime) # Wait some time
-                    print(f"Retry after {sleeptime} seconds")
-                    mult = mult * 2
+                print(f"Image captured with {changedPixels} changed pixels, tweeting {fpath}")
+                if is_dryrun:
+                    print("Dry run mode: not tweeting.")
+                    continue
+                else:
+                    try:
+                        tweet_image.do_tweet(fpath)
+                        mult = 1
+                    except Exception as e:
+                        print("Tweet failed. Encountered exception, as follows: ")
+                        print(e)
+                        sleeptime = mult * basic_wait
+                        time.sleep(sleeptime) # Wait some time
+                        print(f"Retry after {sleeptime} seconds")
+                        mult = mult * 2
        
         # Swap comparison buffers
         image1 = image2
         buffer1 = buffer2
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
+def parse_args():
+    parser = argparse.ArgumentParser(description="Tweet motion-detected JPEG image.")
     parser.add_argument("dir_path", help="Directory to save images")
+    parser.add_argument("--dry-run", action='store_true', help="Run without tweeting")
     args = parser.parse_args()
+    if not os.path.exists(args.dir_path):
+        print(f"Directory {args.dir_path} does not exist.")
+        exit(1)
+    if not os.path.isdir(args.dir_path):
+        print(f"Path {args.dir_path} is not a directory.")
+        exit(1)
+    return args
+
+def main():
+    args = parse_args()
+    if args.dry_run:
+        print("Running in dry-run mode. No images will be tweeted.")
     do_tweet_motion(args.dir_path)
+
+if __name__ == '__main__':
+    main()
