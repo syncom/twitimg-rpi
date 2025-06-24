@@ -94,11 +94,19 @@ def do_tweet_motion(dirname, is_dryrun=False):
     				          
     # Get first image
     captured1 = False
+    image1, buffer1 = None, None
     while (not captured1):
-        image1, buffer1 = captureTestImage()
-        if image1:
+        if is_dryrun:
+            print("Dry run mode: not capturing first test image.")
             captured1 = True
+        else:
+            image1, buffer1 = captureTestImage()
+            if image1:
+                captured1 = True
 
+    count = 0
+    # Main loop
+    print("Starting main loop. Press Ctrl+C to stop.")
     while (True):
         # Time granule for wait in the case of error/exception
         basic_wait = 300
@@ -106,20 +114,30 @@ def do_tweet_motion(dirname, is_dryrun=False):
         mult = 1
 
         # Get comparison image
+        image2, buffer2 = None, None
         captured2 = False
         while (not captured2):
-            image2, buffer2 = captureTestImage()
-            if image2:
+            if is_dryrun:
+                print("Dry run mode: not capturing second test image.")
                 captured2 = True
+            else:
+                image2, buffer2 = captureTestImage()
+                if image2:
+                    captured2 = True
 
         # Count changed pixels
         changedPixels = 0
-        for x in range(0, test_width):
-            for y in range(0, test_height):
-                # Just check green channel as it's the highest quality channel
-                pixdiff = abs(buffer1[x,y][1] - buffer2[x,y][1])
-                if pixdiff > threshold:
-                    changedPixels += 1
+        fpath = "/dev/null"
+
+        if is_dryrun:
+            print("Dry run mode: not counting changed pixels.")
+        else:
+            for x in range(0, test_width):
+                for y in range(0, test_height):
+                    # Just check green channel as it's the highest quality channel
+                    pixdiff = abs(buffer1[x,y][1] - buffer2[x,y][1])
+                    if pixdiff > threshold:
+                        changedPixels += 1
 
         # Save an image if pixels changed
         if changedPixels > sensitivity:
@@ -145,6 +163,11 @@ def do_tweet_motion(dirname, is_dryrun=False):
         # Swap comparison buffers
         image1 = image2
         buffer1 = buffer2
+
+        count += 1
+        if is_dryrun and count >= 5:
+            print("Dry run mode: exiting after 5 iterations.")
+            break
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Tweet motion-detected JPEG image.")
