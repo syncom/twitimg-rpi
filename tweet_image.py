@@ -76,12 +76,13 @@ def do_tweet(file):
 
         status_str = get_mtime_str(file)
 
-        tweet = client.create_tweet(
+        response = client.create_tweet(
             text=status_str[:twitter_allowed_char],
             media_ids=[image.media_id]
         )
 
-        print(f"Tweeted image taken at {status_str}. Tweet ID: {tweet.id}")
+        print(f"Tweeted image taken at {status_str}")
+        print(response)
     except tweepy.TweepyException as e:
         print(f"Error occurred: {e}")
         raise
