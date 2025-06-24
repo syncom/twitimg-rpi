@@ -163,6 +163,7 @@ def do_tweet_motion(dirname, is_dryrun=False):
                         mult = mult * 2
        
         # Swap comparison buffers
+        print("Swapping first and second comparison images and buffers")
         image1 = image2
         buffer1 = buffer2
 
@@ -188,7 +189,7 @@ def main():
     args = parse_args()
     dry_run = args.dry_run
     if dry_run:
-        print("Dry run mode enabled. No images will be tweeted.")
+        print("Dry run mode enabled.")
     else:
         print("Running in normal mode. Images will be tweeted.")
     
