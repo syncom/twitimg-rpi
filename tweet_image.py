@@ -63,6 +63,12 @@ def do_tweet(file):
     auth = tweepy.OAuth1UserHandler(
         api_key, api_secret, access_token, access_token_secret)
     api = tweepy.API(auth)
+    client = tweepy.Client(
+        consumer_key=api_key,
+        consumer_secret=api_secret,
+        access_token=access_token,
+        access_token_secret=access_token_secret
+    )
 
     try:
         image = api.media_upload(filename=file)
@@ -70,12 +76,13 @@ def do_tweet(file):
 
         status_str = get_mtime_str(file)
 
-        tweet = api.update_status(
-            status=status_str[:twitter_allowed_char],
+        tweet = client.create_tweet(
+            text=status_str[:twitter_allowed_char],
             media_ids=[image.media_id]
         )
+
         print(f"Tweeted image taken at {status_str}. Tweet ID: {tweet.id}")
-    except tweepy.TweepError as e:
+    except tweepy.TweepyException as e:
         print(f"Error occurred: {e}")
         raise
 
