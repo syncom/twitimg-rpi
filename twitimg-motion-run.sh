@@ -8,4 +8,5 @@ photo_dir="/mnt/ramdisk_motion"
 python3 -v venv "${SCRIPT_DIR}"/venv3
 # shellcheck source=/dev/null
 source "${SCRIPT_DIR}"/venv3/bin/activate
+pip install -r "${SCRIPT_DIR}"/requirements.txt
 python "${SCRIPT_DIR}"/tweet_motion_jpg.py "${photo_dir}"

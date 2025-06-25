@@ -26,6 +26,15 @@ Usage:
      python3-dev python3-setuptools libjpeg-dev
    ```
 
+   Clone this repo to `/home/pi/twitimg-rpi`, and set up Python virtual
+   environment
+
+   ```bash
+   cd /home/pi
+   git clone https://github.com/syncom/twitimg-rpi.git
+   ```
+
+
 2. Create a Twitter app and obtain the API Key, API Secret, Access Token, and
    Access Token Secret for the app. This can be done by following the
    instructions at:
