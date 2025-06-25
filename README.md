@@ -4,9 +4,10 @@ A simple tool turns a Raspberry Pi (RPi) into a security monitoring system.
 
 # What are needed
 
-- A Raspberry Pi (version 1-3) Model B (needs Internet connectivity)
-- A camera module (this would work:
-  <https://www.raspberrypi.org/products/camera-module/>)
+- A Raspberry Pi (version 1-3) Model B (needs Internet connectivity) running
+  Raspberry Pi OS Lite (32-bit)
+- A camera module (any of these sould work:
+  <https://www.raspberrypi.com/documentation/accessories/camera.html>)
 - imagemagick (for image conversion on the RPi), libssl-dev, build-essential,
   python-imaging, libffi-dev
 - Python 2.7: twython, pyOpenSSL, ndg-httpsclient, pyasn1, PIL
@@ -16,7 +17,23 @@ A simple tool turns a Raspberry Pi (RPi) into a security monitoring system.
 
 Usage:
 
-1. Install the camera module on the RPi, and enable camera module from `raspi-config` menu.
+1. Install the camera module on the RPi. Install the `rpicam-apps` package and
+   other dependencies
+
+   ```bash
+   sudo apt update
+   sudo apt install rpicam-apps imagemagick git vim \
+     python3-dev python3-setuptools libjpeg-dev
+   ```
+
+   Clone this repo to `/home/pi/twitimg-rpi`, and set up Python virtual
+   environment
+
+   ```bash
+   cd /home/pi
+   git clone https://github.com/syncom/twitimg-rpi.git
+   ```
+
 
 2. Create a Twitter app and obtain the API Key, API Secret, Access Token, and
    Access Token Secret for the app. This can be done by following the
@@ -25,23 +42,35 @@ Usage:
    April 2023, if you start seeing API authentication errors, and a message like
    "This app has violated Twitter rules and policies" on the Twitter app setting
    page, sign up for the Free tier of "[Twitter API
-   v2](https://developer.twitter.com/en/portal/products)" (at no cost), and
-   clicked button "downgrade to free"; this resolved the auth issue
+   v2](https://developer.x.com/en/portal/products)" (at no cost), and clicked
+   button "downgrade to free"; this resolved the auth issue
    ([reference](https://twittercommunity.com/t/this-app-has-violated-twitter-rules-and-policies/191204/10)).
+
+   One also needs to create a "project" in the [X developer
+   portal](https://developer.x.com/en/portal/dashboard), and add this Twitter
+   app to it. Otherwise, one might encounter the following error message (as of
+   20250624):
+
+   ```text
+    When authenticating requests to the Twitter API v2 endpoints, you must use
+    keys and tokens from a Twitter developer App that is attached to a Project.
+    You can create a project via the developer portal.
+   ```
 
 3. Override the corresponding strings in the file '.auth' with appropriate
    Twitter app API access token strings obtained in the last step.
 
 4. Because we are going to write and delete a lot of files, in order to prevent
-   the SD card worn out, create a ramdisk (of size 25M bytes) to store image
-   files created during the process.
+   the SD card from wearing out, create a ramdisk (of size 25M bytes) to store
+   image files created during the process.
 
    ```bash
    mkdir /mnt/ramdisk
    mount -t tmpfs -o size=25m tmpfs /mnt/ramdisk
    ```
 
-   To make the ramdisk persist over reboots, add the following lines to `/etc/fstab`:
+   To make the ramdisk persist over reboots, add the following lines to
+   `/etc/fstab`:
 
    ```text
    # ramdisk for camera capture (added 20160306)
