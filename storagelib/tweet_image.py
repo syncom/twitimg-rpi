@@ -1,15 +1,14 @@
 #!/usr/bin/env python
 
+from pathlib import Path
 import os
-import sys
 import argparse
 import time
-import datetime
 import tweepy
 
 twitter_allowed_char = 140
-ROOTDIR = os.path.dirname(os.path.realpath(__file__))
-CRED_FILE = os.path.join(ROOTDIR, '.auth')
+current_dir = Path(__file__).parent.resolve()
+CRED_FILE = current_dir / '.auth'
 
 def get_credential():
     """Botain Twitter app's API credentials from environment or file .auth

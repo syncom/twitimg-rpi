@@ -16,8 +16,7 @@ import time
 import argparse
 from datetime import datetime
 from PIL import Image
-import importlib
-import tweet_image
+import storagelib.tweet_image as tweet_image
 
 # Motion detection settings:
 # - threshold: how much a pixel has to change by to be marked as "changed"
